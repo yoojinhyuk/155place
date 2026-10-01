@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>155 마케팅 | 플레이스 클립 전용 제안서</title>
+<style>
+  @font-face {
+    font-family: 'SUIT';
+    src: url('https://cdn.jsdelivr.net/gh/sunn-us/SUIT@2/fonts/variable/woff2/SUIT-Variable.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+
+  :root{
+    --bg-light:#F4F6FB;
+    --bg-dark:#0D1117;
+    --card-dark:#161B22;
+    --charcoal:#1F2937;
+    --charcoal-soft:#374151;
+    --accent:#2563EB;        /* 일렉트릭 블루 메인 */
+    --accent-glow:#3B82F6;   /* 포인트 블루 */
+    --accent-cyan:#0EA5E9;   /* 시안 블루 */
+    --text:#0F172A;
+    --text-mute:#64748B;
+    --line:#E2E8F0;
+    --line-dark:rgba(255,255,255,0.12);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{
+    scroll-snap-type:y mandatory;
+    background:#07090E;
+  }
+
+  body{
+    font-family:'SUIT','Pretendard',-apple-system,'Malgun Gothic',sans-serif;
+    color:var(--text);
+    overflow-x:hidden;
+    word-break: keep-all;
+    word-wrap: break-word;
+  }
+
+  .stage{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    scroll-snap-align:start;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .slide{
+    width:1280px;
+    height:720px;
+    position:relative;
+    overflow:hidden;
+    flex-shrink:0;
+    transform-origin: center center;
+    box-shadow:0 25px 60px rgba(0,0,0,0.45);
+  }
+
+  /* 부드러운 스크롤 등장 애니메이션 */
+  .anim-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .stage.active .anim-item {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .stage.active .anim-delay-1 { transition-delay: 0.1s; }
+  .stage.active .anim-delay-2 { transition-delay: 0.2s; }
+  .stage.active .anim-delay-3 { transition-delay: 0.3s; }
+  .stage.active .anim-delay-4 { transition-delay: 0.4s; }
+
+  .page-tag{
+    position:absolute;
+    right:56px;
+    bottom:36px;
+    font-size:13px;
+    letter-spacing:0.04em;
+    font-weight:700;
+  }
+  .page-tag span{opacity:0.4;}
+
+  .brand{
+    position:absolute;
+    left:56px;
+    bottom:36px;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:0.04em;
+  }
+
+  /* 슬라이드 베이스 */
+  .slide-dark{ background:var(--bg-dark); color:#FFFFFF; }
+  .slide-light{ background:var(--bg-light); color:var(--text); }
+
+  /* ================= SLIDE 1 : COVER ================= */
+  .s1-glow{
+    position:absolute;
+    right:-100px; top:-100px;
+    width:650px; height:650px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(37,99,235,0.25) 0%, rgba(13,17,23,0) 70%);
+  }
+  .s1-ring{
+    position:absolute;
+    right:-160px; top:-160px;
+    width:560px; height:560px;
+    border-radius:50%;
+    border:1px solid rgba(59,130,246,0.15);
+  }
+  .s1-kicker{
+    position:absolute;
+    left:64px; top:64px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s1-kicker .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent-glow); box-shadow:0 0 10px var(--accent-glow); }
+  .s1-kicker .label{
+    font-size:13px; font-weight:700; letter-spacing:0.08em; color:rgba(255,255,255,0.65);
+  }
+  .s1-lead{
+    position:absolute;
+    left:64px; top:170px;
+    font-size:20px;
+    font-weight:700;
+    color:var(--accent-cyan);
+    letter-spacing:-0.01em;
+  }
+  .s1-title{
+    position:absolute;
+    left:64px; top:206px;
+    width:980px;
+    font-size:48px;
+    font-weight:850;
+    line-height:1.35;
+    color:#FFFFFF;
+  }
+  .s1-title .accent{ color:var(--accent-glow); text-shadow:0 0 30px rgba(59,130,246,0.4); }
+  .s1-sub{
+    position:absolute;
+    left:64px; top:466px;
+    width:800px;
+    font-size:16px;
+    line-height:1.8;
+    color:rgba(255,255,255,0.68);
+    font-weight:500;
+  }
+
+  /* ================= SLIDE 2 : TREND & SEARCH UI ================= */
+  .s2-eyebrow{
+    position:absolute;
+    left:64px; top:54px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-eyebrow .num{ font-size:15px; font-weight:800; color:var(--accent); letter-spacing:0.02em; }
+  .s2-eyebrow .bar{ width:22px; height:2px; background:var(--accent); }
+  .s2-eyebrow .label{ font-size:13px; font-weight:700; color:var(--text-mute); letter-spacing:0.06em; }
+
+  .s2-title{
+    position:absolute;
+    left:64px; top:92px;
+    width:620px;
+    font-size:33px;
+    font-weight:850;
+    line-height:1.35;
+  }
+  .s2-title em{ font-style:normal; color:var(--accent); }
+
+  .s2-left-content{
+    position:absolute;
+    left:64px; top:230px;
+    width:560px;
+  }
+  .s2-badge-hot{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:20px;
+    background:rgba(37,99,235,0.1); color:var(--accent);
+    font-size:13px; font-weight:800; margin-bottom:18px;
+  }
+  .s2-p-main{
+    font-size:17px; font-weight:700; line-height:1.65; color:var(--charcoal); margin-bottom:14px;
+  }
+  .s2-p-sub{
+    font-size:14px; line-height:1.75; color:var(--text-mute); font-weight:500; margin-bottom:24px;
+  }
+  .s2-callout{
+    background:#FFFFFF; border:1px solid var(--line); border-left:4px solid var(--accent);
+    padding:16px 20px; border-radius:6px; box-shadow:0 4px 14px rgba(0,0,0,0.03);
+  }
+  .s2-callout b{ color:var(--accent); font-size:15px; display:block; margin-bottom:4px; }
+  .s2-callout span{ font-size:13px; color:var(--text-mute); line-height:1.6; }
+
+  /* 우측 네이버 모바일 검색 모형 UI */
+  .s2-mockup-wrap{
+    position:absolute;
+    right:64px; top:86px; width:520px; height:540px;
+    background:#FFFFFF; border:1px solid #D1D5DB; border-radius:18px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.08); overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .s2-mockup-header{
+    background:#F8FAFC; border-bottom:1px solid #E2E8F0; padding:12px 16px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .mock-n-logo{
+    width:24px; height:24px; background:#03C75A; color:#fff; font-weight:900;
+    display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:14px; flex-shrink:0;
+  }
+  .mock-search-form{
+    flex:1; background:#FFFFFF; border:2px solid #03C75A; border-radius:22px;
+    padding:6px 14px; display:flex; align-items:center;
+  }
+  .mock-search-input{
+    flex:1; border:none; outline:none; font-size:13.5px; font-weight:700; color:#1E293B; background:transparent;
+  }
+  .mock-search-input::placeholder{
+    color:#94A3B8; font-weight:500;
+  }
+  .mock-search-btn{
+    background:none; border:none; cursor:pointer; font-size:15px; padding:0 2px;
+  }
+  .s2-mockup-tabs{
+    display:flex; gap:16px; padding:10px 18px; font-size:12px; font-weight:700; color:#64748B;
+    border-bottom:1px solid #F1F5F9; background:#fff;
+  }
+  .s2-mockup-tabs .active{ color:#03C75A; border-bottom:2px solid #03C75A; padding-bottom:4px; }
+  .s2-mockup-clip-sec{
+    padding:16px; flex:1; background:#FAFAFA; display:flex; flex-direction:column;
+  }
+  .mock-clip-title{
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;
+  }
+  .mock-clip-title b{ font-size:14px; font-weight:800; color:#1E293B; display:flex; align-items:center; gap:6px; }
+  .mock-clip-cards{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;
+  }
+  .mock-clip-card{
+    background:#0F172A; border-radius:10px; height:260px; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:flex-end; padding:12px; color:#fff;
+    box-shadow:0 6px 14px rgba(0,0,0,0.15);
+  }
+  .mock-clip-card::before{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.1) 60%);
+  }
+  .mock-clip-card.c1{ background:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400') center/cover; }
+  .mock-clip-card.c2{ background:url('https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400') center/cover; }
+  .mock-clip-card.c3{ background:url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400') center/cover; }
+  .mock-badge{
+    position:relative; z-index:2; background:rgba(37,99,235,0.95); font-size:10.5px; font-weight:800;
+    padding:3px 7px; border-radius:4px; width:fit-content; margin-bottom:6px;
+  }
+  .mock-txt{ position:relative; z-index:2; font-size:11.5px; font-weight:700; line-height:1.4; }
+  .mock-creator{ position:relative; z-index:2; font-size:10px; color:#CBD5E1; margin-top:6px; }
+  .mock-action-tip{
+    margin-top:auto; background:#EFF6FF; border:1px dashed #3B82F6; padding:9px; border-radius:8px; text-align:center;
+  }
+  .mock-action-tip span{ font-size:11.5px; font-weight:700; color:#1D4ED8; }
+
+  /* ================= SLIDE 3 : RESULT (업데이트 완료) ================= */
+  .s3-eyebrow{
+    position:absolute;
+    left:64px; top:54px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s3-eyebrow .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent-glow); box-shadow:0 0 10px var(--accent-glow); }
+  .s3-eyebrow .label{ font-size:13px; font-weight:700; color:rgba(255,255,255,0.6); letter-spacing:0.06em; }
+  .s3-title{
+    position:absolute;
+    left:64px; top:90px;
+    width:1050px;
+    font-size:32px;
+    font-weight:850;
+    line-height:1.38;
+  }
+  .s3-title .highlight{ color:var(--accent-cyan); text-shadow:0 0 25px rgba(14,165,233,0.4); }
+  .s3-sub{
+    position:absolute;
+    left:64px; top:184px;
+    font-size:14px;
+    color:rgba(255,255,255,0.65);
+    font-weight:500;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s3-sub .tag-pill{
+    background:rgba(37,99,235,0.3); border:1px solid rgba(59,130,246,0.4);
+    padding:3px 10px; border-radius:12px; font-size:12px; color:#93C5FD; font-weight:800;
+  }
+  .s3-cols{
+    position:absolute;
+    left:64px; right:64px; top:238px; bottom:86px;
+    display:flex;
+  }
+  .s3-col{
+    flex:1;
+    padding:0 30px;
+    display:flex; flex-direction:column;
+  }
+  .s3-col:first-child{ padding-left:0; }
+  .s3-col:last-child{ padding-right:0; }
+  .s3-col + .s3-col{ border-left:1px solid var(--line-dark); }
+  .s3-tag{
+    display:inline-block; font-size:11.5px; font-weight:800; letter-spacing:0.04em;
+    color:var(--accent-cyan); background:rgba(14,165,233,0.12);
+    border:1px solid rgba(14,165,233,0.25);
+    padding:4px 10px; border-radius:4px; width:fit-content; margin-bottom:14px;
+  }
+  .s3-company{ font-size:20px; font-weight:850; margin-bottom:16px; }
+  .s3-roas-num{
+    font-size:48px; font-weight:900; color:var(--accent-cyan); line-height:1; letter-spacing:-0.01em;
+  }
+  .s3-roas-label{
+    font-size:12px; font-weight:800; letter-spacing:0.12em; color:rgba(255,255,255,0.4); margin-top:6px; margin-bottom:20px;
+  }
+  .s3-detail{ font-size:13.5px; line-height:1.75; color:rgba(255,255,255,0.7); font-weight:500; margin-bottom:18px; }
+  .s3-detail b{ color:#FFFFFF; font-weight:800; }
+  .s3-cost-badge{
+    font-size:12px; color:#93C5FD; background:rgba(37,99,235,0.2);
+    padding:4px 10px; border-radius:4px; margin-bottom:16px; display:inline-block; width:fit-content; font-weight:600;
+  }
+  .s3-bar-row{ margin-top:auto; }
+  .s3-bar-label{
+    display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:rgba(255,255,255,0.5); margin-bottom:6px;
+  }
+  .s3-bar-label b{ color:var(--accent-cyan); font-weight:800; font-size:12px; }
+  .s3-bar-track{
+    width:100%; height:8px; background:var(--charcoal-soft); border-radius:4px; overflow:hidden; position:relative;
+  }
+  .s3-bar-fill{ height:100%; background:linear-gradient(90deg, #2563EB, #38BDF8); border-radius:4px; }
+  .s3-bar-target{ position:absolute; top:-4px; width:2px; height:16px; background:rgba(255,255,255,0.9); }
+
+  /* ================= SLIDE 4 : NO-EXPERIENCE SOLUTION ================= */
+  .s4-title{
+    position:absolute;
+    left:64px; top:86px;
+    width:940px;
+    font-size:32px;
+    font-weight:850;
+    line-height:1.38;
+    color:#FFFFFF;
+  }
+  .s4-title .highlight{ color:var(--accent-cyan); }
+  .s4-subhead{
+    position:absolute;
+    left:64px; top:170px;
+    font-size:15px; color:rgba(255,255,255,0.68); font-weight:500;
+  }
+  .s4-cols{
+    position:absolute;
+    left:64px; right:64px; top:216px; bottom:86px;
+    display:flex;
+  }
+  .s4-col{
+    flex:1; padding:0 30px; display:flex; flex-direction:column;
+  }
+  .s4-col:first-child{ padding-left:0; }
+  .s4-col:last-child{ padding-right:0; }
+  .s4-col + .s4-col{ border-left:1px solid var(--line-dark); }
+  .s4-badge{
+    width:42px; height:42px; border-radius:10px;
+    background:linear-gradient(135deg, #2563EB, #0EA5E9);
+    color:#FFFFFF; display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:850; margin-bottom:18px; box-shadow:0 6px 16px rgba(37,99,235,0.3);
+  }
+  .s4-col h3{
+    font-size:18px; font-weight:800; color:#FFFFFF; line-height:1.45; margin-bottom:16px; min-height:52px;
+  }
+  .s4-col ul{ list-style:none; }
+  .s4-col li{
+    position:relative; padding-left:14px; font-size:13px; line-height:1.75; color:rgba(255,255,255,0.65); font-weight:500; margin-bottom:12px;
+  }
+  .s4-col li::before{
+    content:""; position:absolute; left:0; top:8px; width:4px; height:4px; border-radius:50%; background:var(--accent-cyan);
+  }
+
+  /* ================= SLIDE 5 & 6 : PRICING PLANS ================= */
+  .plan-header{
+    position:absolute; left:64px; top:86px; right:64px;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .plan-title{ font-size:31px; font-weight:850; color:var(--text); }
+  .plan-sub{ font-size:14px; color:var(--text-mute); font-weight:500; }
+  .plan-cards{
+    position:absolute; left:64px; right:64px; top:186px; bottom:78px;
+    display:flex; gap:22px; align-items:stretch;
+  }
+  .p-card{
+    flex:1; background:#FFFFFF; border:1px solid var(--line); border-radius:10px;
+    padding:24px 22px; display:flex; flex-direction:column; position:relative;
+    box-shadow:0 4px 18px rgba(0,0,0,0.03); cursor:pointer;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  }
+  .p-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 18px 36px rgba(37,99,235,0.12);
+    border-color:var(--accent);
+  }
+  .p-card.featured{
+    border:2px solid var(--accent);
+    background:linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    box-shadow:0 12px 28px rgba(37,99,235,0.1);
+  }
+  .p-badge-best{
+    position:absolute; top:-12px; left:22px;
+    background:linear-gradient(90deg, #2563EB, #1D4ED8);
+    color:#fff; font-size:11px; font-weight:800; letter-spacing:0.04em;
+    padding:4px 12px; border-radius:14px; box-shadow:0 4px 10px rgba(37,99,235,0.3);
+  }
+  .p-card .plan-name{
+    font-size:13px; font-weight:800; color:var(--accent); letter-spacing:0.04em; margin-bottom:6px;
+  }
+  .p-card .orig-price{
+    font-size:13px; color:#94A3B8; text-decoration:line-through; font-weight:600;
+  }
+  .p-card .price{ font-size:26px; font-weight:850; color:var(--text); margin-bottom:2px; display:flex; align-items:baseline; gap:6px; }
+  .p-card .price .unit{ font-size:13px; font-weight:600; color:var(--text-mute); }
+  .p-card .total{ font-size:12px; color:var(--text-mute); font-weight:500; margin-bottom:12px; }
+  .p-card hr{ border:none; border-top:1px solid var(--line); margin-bottom:14px; }
+  .p-card ul{ list-style:none; flex:1; }
+  .p-card li{
+    position:relative; padding-left:18px; font-size:12.5px; line-height:1.75; color:var(--text); font-weight:600; margin-bottom:6px;
+  }
+  .p-card li::before{
+    content:"✓"; position:absolute; left:0; top:0; color:var(--accent); font-weight:800; font-size:12px;
+  }
+  .p-card .cta{
+    margin-top:14px; text-align:center; font-size:13px; font-weight:800; padding:11px 0; border-radius:6px;
+    background:var(--bg-light); color:var(--charcoal); transition:0.2s;
+  }
+  .p-card:hover .cta{ background:var(--charcoal); color:#fff; }
+  .p-card.featured .cta{ background:var(--accent); color:#fff; }
+  .p-card.featured:hover .cta{ background:#1D4ED8; }
+
+  /* ================= SLIDE 7 : PROCESS ================= */
+  .s7-title{
+    position:absolute; left:64px; top:94px; width:900px;
+    font-size:33px; font-weight:850; line-height:1.35; color:var(--text);
+  }
+  .s7-flow{
+    position:absolute; left:64px; right:64px; top:230px; display:flex;
+  }
+  .s7-step{ flex:1; position:relative; padding-right:32px; }
+  .s7-step:last-child{ padding-right:0; }
+  .s7-line{
+    position:absolute; top:23px; left:23px; right:23px; height:2px; background:var(--line); z-index:0;
+  }
+  .s7-circle{
+    position:relative; z-index:1; width:46px; height:46px; border-radius:50%;
+    background:var(--charcoal); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:850; margin-bottom:20px;
+  }
+  .s7-step:nth-child(even) .s7-circle{ background:var(--accent); box-shadow:0 0 14px rgba(37,99,235,0.4); }
+  .s7-step .step-tag{ font-size:11.5px; font-weight:800; letter-spacing:0.04em; color:var(--accent); margin-bottom:8px; }
+  .s7-step h3{ font-size:17px; font-weight:850; color:var(--text); line-height:1.4; margin-bottom:12px; min-height:46px; }
+  .s7-step p{ font-size:12.5px; line-height:1.75; color:var(--text-mute); font-weight:500; }
+
+  /* ================= SLIDE 8 : CLOSING & TERRITORY GUARANTEE ================= */
+  .s8-quote-mark{
+    position:absolute; left:64px; top:54px; font-size:80px; font-weight:900;
+    color:var(--accent-glow); line-height:1; font-family:Georgia, serif;
+  }
+  .s8-quote{
+    position:absolute; left:64px; top:140px; width:1000px;
+    font-size:30px; font-weight:850; line-height:1.45; color:#FFFFFF;
+  }
+  .s8-quote .accent{ color:var(--accent-cyan); text-shadow:0 0 25px rgba(14,165,233,0.3); }
+
+  /* 지역 독점 보장 박스 */
+  .s8-guarantee-box{
+    position:absolute; left:64px; top:280px; right:64px;
+    background:rgba(37,99,235,0.08); border:1.5px solid rgba(59,130,246,0.3);
+    border-radius:12px; padding:22px 28px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .s8-g-left{ max-width:850px; }
+  .s8-g-title{
+    font-size:18px; font-weight:850; color:#FFFFFF; margin-bottom:10px; display:flex; align-items:center; gap:10px;
+  }
+  .s8-g-title .g-tag{
+    background:linear-gradient(90deg, #2563EB, #0EA5E9); color:#fff; font-size:11px;
+    font-weight:800; padding:3px 10px; border-radius:4px;
+  }
+  .s8-g-desc{
+    font-size:13.5px; line-height:1.75; color:rgba(255,255,255,0.8); font-weight:500;
+  }
+  .s8-g-desc b{ color:#38BDF8; font-weight:800; }
+  .s8-refund-badge{
+    background:#1E293B; border:1px solid #38BDF8; border-radius:8px;
+    padding:14px 22px; text-align:center; min-width:180px;
+  }
+  .s8-refund-num{ font-size:26px; font-weight:900; color:#38BDF8; line-height:1.1; }
+  .s8-refund-label{ font-size:11px; color:rgba(255,255,255,0.7); font-weight:700; margin-top:4px; }
+
+  .s8-cta-row{
+    position:absolute; left:64px; bottom:68px; display:flex; align-items:center; gap:22px;
+  }
+  .s8-btn{
+    background:linear-gradient(90deg, #2563EB, #1D4ED8); color:#fff; font-size:15px; font-weight:850;
+    padding:16px 34px; border-radius:6px; cursor:pointer; letter-spacing:0.02em;
+    box-shadow:0 8px 24px rgba(37,99,235,0.35); transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .s8-btn:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(37,99,235,0.5); }
+  .s8-note{ font-size:13px; color:rgba(255,255,255,0.5); font-weight:500; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 : COVER -->
+<div class="stage" id="stage-1">
+  <div class="slide slide-dark">
+    <div class="s1-glow"></div>
+    <div class="s1-ring"></div>
+    <div class="s1-kicker anim-item">
+      <span class="dot"></span>
+      <span class="label">PLACE VIRAL DECK</span>
+    </div>
+    <div class="s1-lead anim-item anim-delay-1">남들은 이미 숏폼으로 동네 손님 쓸어 담는 중입니다</div>
+    <div class="s1-title anim-item anim-delay-2">
+      대표님, 왜 네이버 클립은<br>
+      <span class="accent">아직도 안 하시나요?</span>
+    </div>
+    <div class="s1-sub anim-item anim-delay-3">
+      <strong>체험단 응대 ZERO.</strong> 매장 스마트폰에 잠자고 있는 사진·영상만 보내주세요.<br>
+      <strong>건당 단돈 1만 원대</strong>로 우리 동네 네이버 검색 최상단과 숏폼 알고리즘을 완벽하게 장악해 드립니다.
+    </div>
+    <div class="brand" style="color:rgba(255,255,255,0.4);">155 MARKETING · PLACE</div>
+    <div class="page-tag" style="color:rgba(255,255,255,0.4);"><span>0</span>1</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 : TREND & SEARCH UI -->
+<div class="stage" id="stage-2">
+  <div class="slide slide-light">
+    <div class="s2-eyebrow anim-item">
+      <span class="num">02</span>
+      <span class="bar"></span>
+      <span class="label">WHY NAVER CLIP NOW?</span>
+    </div>
+    <div class="s2-title anim-item anim-delay-1">
+      네이버에 <em>[지역 + 업종]</em> 검색해 보셨나요?<br>
+      화면 맨 위는 이제 <b>클립</b>이 차지했습니다
+    </div>
+
+    <div class="s2-left-content anim-item anim-delay-2">
+      <div class="s2-badge-hot">🔥 네이버 모바일 검색 개편 핵심 판도</div>
+      <p class="s2-p-main">
+        소비자들은 더 이상 긴 텍스트 후기만 읽지 않습니다.<br>
+        실제 매장 분위기, 시술 영상, 공간 비주얼을 10초 숏폼으로 먼저 확인합니다.
+      </p>
+      <p class="s2-p-sub">
+        네이버 알고리즘이 플레이스 검색 최상단에 숏폼 클립을 집중 노출시키고 있습니다. 경쟁 매장이 손놓고 있는 지금 선점하지 않으면 우리 동네 1등 자리를 영영 빼앗깁니다.
+      </p>
+      <div class="s2-callout">
+        <b>💡 건당 단돈 1만 원대, 안 할 이유가 없습니다</b>
+        <span>무료 시술 체험단을 불러 번거롭게 응대할 필요가 없습니다. 원장님 폰 앨범 속 사진·영상만 주시면 알아서 다계정으로 배포합니다.</span>
+      </div>
+    </div>
+
+    <!-- 우측 네이버 검색 모바일 목업 -->
+    <div class="s2-mockup-wrap anim-item anim-delay-3">
+      <div class="s2-mockup-header">
+        <div class="mock-n-logo">N</div>
+        <form class="mock-search-form" onsubmit="searchNaver(event)">
+          <input type="text" id="naverKeywordInput" class="mock-search-input" placeholder="우리 가게를 검색해 보세요" autocomplete="off">
+          <button type="submit" class="mock-search-btn" title="네이버 검색 실행">🔍</button>
+        </form>
+      </div>
+      <div class="s2-mockup-tabs">
+        <span class="active">통합검색</span>
+        <span>플레이스</span>
+        <span>클립</span>
+        <span>블로그</span>
+      </div>
+      <div class="s2-mockup-clip-sec">
+        <div class="mock-clip-title">
+          <b>네이버 클립 ⓘ</b>
+          <span style="font-size:11px; color:#64748B;">클립 더보기 &gt;</span>
+        </div>
+        <div class="mock-clip-cards">
+          <!-- 구월동 PT 고정 -->
+          <div class="mock-clip-card c1">
+            <div class="mock-badge" id="previewBadge1">구월동 PT</div>
+            <div class="mock-txt">웨딩 촬영 전 -5kg 성공 1:1 PT 후기</div>
+            <div class="mock-creator">운동하는 쥬니 · 조회수 1.2만</div>
+          </div>
+          <div class="mock-clip-card c2">
+            <div class="mock-badge">강남 피부관리</div>
+            <div class="mock-txt">윤곽관리 1회차 리얼 비포애프터</div>
+            <div class="mock-creator">에스테틱 로이 · 조회수 8.4천</div>
+          </div>
+          <div class="mock-clip-card c3">
+            <div class="mock-badge">수원 탈모케어</div>
+            <div class="mock-txt">두피 스케일링 전후 모공 현미경 비교</div>
+            <div class="mock-creator">헤어디자이너 리나 · 조회수 9.1천</div>
+          </div>
+        </div>
+        <div class="mock-action-tip">
+          <span>👆 검색창에 키워드를 치고 [엔터/돋보기]를 누르면 실제 네이버 모바일 검색창이 열립니다!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand">155 MARKETING</div>
+    <div class="page-tag"><span>0</span>2</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 : RESULT (업데이트 완료) -->
+<div class="stage" id="stage-3">
+  <div class="slide slide-dark">
+    <div class="s3-eyebrow anim-item">
+      <span class="dot"></span>
+      <span class="label">PROVEN PERFORMANCE</span>
+    </div>
+    <div class="s3-title anim-item anim-delay-1">
+      광고비 100만원대로 <span class="highlight">신규 회원 매출 1,500만원</span><br>
+      오프라인 매장 실제 전환 검증 사례
+    </div>
+    <div class="s3-sub anim-item anim-delay-1">
+      <span class="tag-pill">PLACE CASE STUDY</span>
+      지역 기반 플레이스에서 클립+블로그 점유로 신규 예약이 폭발한 대표 3개 업종
+    </div>
+
+    <div class="s3-cols anim-item anim-delay-2">
+      <!-- 구월동 PT샵 -->
+      <div class="s3-col">
+        <div class="s3-tag">인천 구월동 · 피트니스</div>
+        <div class="s3-company">구월동 A PT샵</div>
+        <div class="s3-roas-num">926%</div>
+        <div class="s3-roas-label">ROAS (광고수익률)</div>
+        <div class="s3-cost-badge">집행 광고비 : 162만원</div>
+        <div class="s3-detail">
+          12주 목표 신규 매출 <b>600만원</b> 대비<br>
+          실제 신규 회원권 <b>1,500만원</b> 달성!
+        </div>
+        <div class="s3-bar-row">
+          <div class="s3-bar-label"><span>목표 600만원</span><span>초과 달성 <b>250%</b></span></div>
+          <div class="s3-bar-track">
+            <div class="s3-bar-fill" style="width:100%;"></div>
+            <div class="s3-bar-target" style="left:40%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 강남 피부샵 -->
+      <div class="s3-col">
+        <div class="s3-tag">서울 강남구 · 에스테틱</div>
+        <div class="s3-company">강남 B 피부관리샵</div>
+        <div class="s3-roas-num">802%</div>
+        <div class="s3-roas-label">ROAS (광고수익률)</div>
+        <div class="s3-cost-badge">집행 광고비 : 162만원</div>
+        <div class="s3-detail">
+          8주 목표 신규 매출 <b>600만원</b> 대비<br>
+          실제 티켓팅 매출 <b>1,300만원</b> 달성!
+        </div>
+        <div class="s3-bar-row">
+          <div class="s3-bar-label"><span>목표 600만원</span><span>초과 달성 <b>217%</b></span></div>
+          <div class="s3-bar-track">
+            <div class="s3-bar-fill" style="width:100%;"></div>
+            <div class="s3-bar-target" style="left:46%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 강남 두피관리샵 -->
+      <div class="s3-col">
+        <div class="s3-tag">서울 강남구 · 헤어/두피스파</div>
+        <div class="s3-company">강남 C 두피관리샵</div>
+        <div class="s3-roas-num">778%</div>
+        <div class="s3-roas-label">ROAS (광고수익률)</div>
+        <div class="s3-cost-badge">집행 광고비 : 90만원</div>
+        <div class="s3-detail">
+          8주 목표 신규 매출 <b>200만원</b> 대비<br>
+          실제 코스 등록 매출 <b>700만원</b> 달성!
+        </div>
+        <div class="s3-bar-row">
+          <div class="s3-bar-label"><span>목표 200만원</span><span>초과 달성 <b>350%</b></span></div>
+          <div class="s3-bar-track">
+            <div class="s3-bar-fill" style="width:100%;"></div>
+            <div class="s3-bar-target" style="left:28%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand" style="color:rgba(255,255,255,0.4);">155 MARKETING</div>
+    <div class="page-tag" style="color:rgba(255,255,255,0.4);"><span>0</span>3</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 : NO-EXPERIENCE SOLUTION -->
+<div class="stage" id="stage-4">
+  <div class="slide slide-dark">
+    <div class="s3-eyebrow anim-item">
+      <span class="dot"></span>
+      <span class="label">ZERO STRESS SOLUTION</span>
+    </div>
+    <div class="s4-title anim-item anim-delay-1">
+      체험단 응대 ZERO. <span class="highlight">핸드폰 속 사진·영상</span>으로<br>
+      매월 10개의 고효율 바이럴 자산을 완성합니다
+    </div>
+    <div class="s4-subhead anim-item anim-delay-1">
+      시간 뺏기는 체험단 응대 NO! 원장님 갤러리 속 잠자던 사진·영상을 가장 강력한 '노출 물량'으로 전환합니다.
+    </div>
+
+    <div class="s4-cols anim-item anim-delay-2">
+      <div class="s4-col">
+        <div class="s4-badge">01</div>
+        <h3>잠자는 사진·영상 전송<br>(체험단 스트레스 ZERO)</h3>
+        <ul>
+          <li>노쇼(No-show) 걱정, 스케줄 조율, 무료 시술 제공 등 귀찮은 체험단 응대가 완전히 사라집니다.</li>
+          <li>매장 인테리어, 시술 과정, 비포애프터 등 보관 중이던 사진과 짤막한 영상을 카톡으로 툭 보내주시면 끝납니다.</li>
+          <li>찍어두고 쓰지 못해 앨범 속에 썩혀두던 소중한 자료들을 100% 재활용합니다.</li>
+        </ul>
+      </div>
+
+      <div class="s4-col">
+        <div class="s4-badge">02</div>
+        <h3>압도적 발행량으로<br>상단 노출 융단폭격</h3>
+        <ul>
+          <li>클립 알고리즘의 핵심은 과도한 편집이 아닌, <strong>'압도적인 물량과 노출 빈도'</strong>입니다.</li>
+          <li>보내주신 자료를 최적의 숏폼 규격으로 빠르게 세팅하여 검색창과 클립 피드 곳곳에 지속적으로 노출시킵니다.</li>
+          <li>소비자가 우리 동네 키워드를 칠 때마다 우리 매장이 계속 보이도록 판을 장악합니다.</li>
+        </ul>
+      </div>
+
+      <div class="s4-col">
+        <div class="s4-badge">03</div>
+        <h3>서로 다른 계정으로<br>알고리즘 분산 배포</h3>
+        <ul>
+          <li>단일 계정이 아닌, 서로 다른 최적화 계정들로 분산 업로드하여 검색 피드를 입체적으로 도배합니다.</li>
+          <li>네이버 플레이스 지도 연동 태그를 장착하여 클립을 본 잠재 고객이 즉시 매장 예약과 전화로 직결됩니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="brand" style="color:rgba(255,255,255,0.4);">155 MARKETING</div>
+    <div class="page-tag" style="color:rgba(255,255,255,0.4);"><span>0</span>4</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 : PACKAGE 1 (블로그 + 클립 결합 플랜) -->
+<div class="stage" id="stage-5">
+  <div class="slide slide-light">
+    <div class="s2-eyebrow anim-item">
+      <span class="num">05</span>
+      <span class="bar"></span>
+      <span class="label">PLAN A · ALL-IN-ONE</span>
+    </div>
+
+    <div class="plan-header anim-item anim-delay-1">
+      <div class="plan-title">[블로그 + 클립] 올인원 점유 플랜</div>
+      <div class="plan-sub">상세 검색(블로그)과 추천 알고리즘(클립)을 동시에 장악하여 신규 예약 문의를 극대화하는 표준 패키지</div>
+    </div>
+
+    <div class="plan-cards anim-item anim-delay-2">
+      <!-- BASIC -->
+      <div class="p-card">
+        <div class="plan-name">BASIC</div>
+        <div class="orig-price">정상가 월 20만원</div>
+        <div class="price">월 15만원 <span class="unit">/ 월</span></div>
+        <div class="total">6개월 90만원 (VAT 별도) · 할인 특가</div>
+        <hr>
+        <ul>
+          <li>진행 기간 6개월</li>
+          <li><strong>월 네이버 블로그 5건</strong> 발행</li>
+          <li><strong>월 네이버 클립 5건</strong> 발행</li>
+          <li>지역 롱테일 키워드 촘촘한 세팅</li>
+          <li>건당 단돈 1.5만원 꼴 압도적 가성비</li>
+        </ul>
+        <div class="cta">플랜 선택 및 상담</div>
+      </div>
+
+      <!-- STANDARD -->
+      <div class="p-card featured">
+        <div class="p-badge-best">가장 인기</div>
+        <div class="plan-name">STANDARD</div>
+        <div class="orig-price">정상가 월 36만원</div>
+        <div class="price">월 27만원 <span class="unit">/ 월</span></div>
+        <div class="total">6개월 162만원 (VAT 별도) · 25% 파격 할인</div>
+        <hr>
+        <ul>
+          <li>진행 기간 6개월</li>
+          <li><strong>월 네이버 블로그 10건</strong> 발행</li>
+          <li><strong>월 네이버 클립 10건</strong> 발행</li>
+          <li>핵심 메인 키워드 1페이지 독점 노출</li>
+          <li>원장님 매장 소스 기반 맞춤 분배 배포</li>
+        </ul>
+        <div class="cta">플랜 선택 및 상담</div>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="p-card">
+        <div class="plan-name">PREMIUM</div>
+        <div class="orig-price">정상가 월 66만원</div>
+        <div class="price">월 49만원 <span class="unit">/ 월</span></div>
+        <div class="total">6개월 294만원 (VAT 별도) · 최대 혜택</div>
+        <hr>
+        <ul>
+          <li>진행 기간 6개월</li>
+          <li><strong>월 네이버 블로그 20건</strong> 발행</li>
+          <li><strong>월 네이버 클립 20건</strong> 발행</li>
+          <li>지역구 전체 검색 점유율 완전 장악</li>
+          <li>최우선 전문 마케터 1:1 밀착 배정</li>
+        </ul>
+        <div class="cta">플랜 선택 및 상담</div>
+      </div>
+    </div>
+
+    <div class="brand">155 MARKETING</div>
+    <div class="page-tag"><span>0</span>5</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 : PACKAGE 2 (ONLY 클립 플랜) -->
+<div class="stage" id="stage-6">
+  <div class="slide slide-light">
+    <div class="s2-eyebrow anim-item">
+      <span class="num">06</span>
+      <span class="bar"></span>
+      <span class="label">PLAN B · ONLY CLIP</span>
+    </div>
+
+    <div class="plan-header anim-item anim-delay-1">
+      <div class="plan-title">[Only 클립] 숏폼 집중 플랜 (클립 2배 발행!)</div>
+      <div class="plan-sub">"이미 블로그는 하고 계신가요?" 블로그 발행 없이 오직 네이버 클립 수량을 2배로 폭발시키는 숏폼 특화 플랜</div>
+    </div>
+
+    <div class="plan-cards anim-item anim-delay-2">
+      <!-- BASIC -->
+      <div class="p-card">
+        <div class="plan-name">CLIP BASIC</div>
+        <div class="orig-price">정상가 월 20만원</div>
+        <div class="price">월 15만원 <span class="unit">/ 월</span></div>
+        <div class="total">6개월 90만원 (VAT 별도) · 건당 1.5만원</div>
+        <hr>
+        <ul>
+          <li>진행 기간 6개월</li>
+          <li>블로그 발행 제외 ➔ <strong>클립에 올인</strong></li>
+          <li><strong>월 네이버 클립 10건</strong> 발행 (2배!)</li>
+          <li>숏폼 알고리즘 집중 노출 타깃팅</li>
+          <li>사진/영상 소스 최적화 분배 배포</li>
+        </ul>
+        <div class="cta">플랜 선택 및 상담</div>
+      </div>
+
+      <!-- STANDARD -->
+      <div class="p-card featured">
+        <div class="p-badge-best">클립 추천</div>
+        <div class="plan-name">CLIP STANDARD</div>
+        <div class="orig-price">정상가 월 36만원</div>
+        <div class="price">월 27만원 <span class="unit">/ 월</span></div>
+        <div class="total">6개월 162만원 (VAT 별도) · 건당 1.3만원</div>
+        <hr>
+        <ul>
+          <li>진행 기간 6개월</li>
+          <li>블로그 발행 제외 ➔ <strong>클립에 올인</strong></li>
+          <li><strong>월 네이버 클립 20건</strong> 발행 (2배!)</li>
+          <li>지역 내 숏폼 피드 점유율 압도적 1위</li>
+          <li>매주 새로운 매장 영상 바이럴 자산화</li>
+        </ul>
+        <div class="cta">플랜 선택 및 상담</div>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="p-card">
+        <div class="plan-name">CLIP PREMIUM</div>
+        <div class="orig-price">정상가 월 66만원</div>
+        <div class="price">월 49만원 <span class="unit">/ 월</span></div>
+        <div class="total">6개월 294만원 (VAT 별도) · 건당 1.2만원</div>
+        <hr>
+        <ul>
+          <li>진행 기간 6개월</li>
+          <li>블로그 발행 제외 ➔ <strong>클립에 올인</strong></li>
+          <li><strong>월 네이버 클립 40건</strong> 발행 (2배!)</li>
+          <li>동네 잠재고객 피드에 우리 매장 무한 도배</li>
+          <li>최고 가성비 바이럴 파이프라인 구축</li>
+        </ul>
+        <div class="cta">플랜 선택 및 상담</div>
+      </div>
+    </div>
+
+    <div class="brand">155 MARKETING</div>
+    <div class="page-tag"><span>0</span>6</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 : PROCESS (플레이스 전용 프로세스) -->
+<div class="stage" id="stage-7">
+  <div class="slide slide-light">
+    <div class="s2-eyebrow anim-item">
+      <span class="num">07</span>
+      <span class="bar"></span>
+      <span class="label">ZERO EFFORT PROCESS</span>
+    </div>
+    <div class="s7-title anim-item anim-delay-1">대표님은 사진만 주시면 됩니다<br>처음부터 끝까지 알아서 진행됩니다</div>
+
+    <div class="s7-flow anim-item anim-delay-2">
+      <div class="s7-line"></div>
+
+      <div class="s7-step">
+        <div class="s7-circle">1</div>
+        <div class="step-tag">STEP 1</div>
+        <h3>지역 황금 키워드 세팅</h3>
+        <p>우리 매장 주변 반경의 유효 고객이 검색하는 네이버 고효율 키워드 리스트를 정밀 세팅합니다.</p>
+      </div>
+
+      <div class="s7-step">
+        <div class="s7-circle">2</div>
+        <div class="step-tag">STEP 2</div>
+        <h3>사진·영상 카톡 전달</h3>
+        <p>체험단 예약 조율 없이, 휴대폰 속에 있는 시술/매장 사진과 영상을 전담 카톡방으로 툭 보내주시면 끝납니다.</p>
+      </div>
+
+      <div class="s7-step">
+        <div class="s7-circle">3</div>
+        <div class="step-tag">STEP 3</div>
+        <h3>노출 최적화 숏폼 패키징</h3>
+        <p>전달해주신 원본 소스를 네이버 알고리즘이 가장 선호하는 숏폼 규격과 상위 노출 태그로 세련되게 세팅합니다.</p>
+      </div>
+
+      <div class="s7-step">
+        <div class="s7-circle">4</div>
+        <div class="step-tag">STEP 4</div>
+        <h3>다계정 배포 &amp; 리포트</h3>
+        <p>다수의 최적화 계정으로 순차 배포하여 검색 화면을 도배하고, 링크가 취합된 완료 보고서를 전달합니다.</p>
+      </div>
+    </div>
+
+    <div class="brand">155 MARKETING</div>
+    <div class="page-tag"><span>0</span>7</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 : CLOSING & TERRITORY GUARANTEE -->
+<div class="stage" id="stage-8">
+  <div class="slide slide-dark">
+    <div class="s8-quote-mark anim-item">“</div>
+    <div class="s8-quote anim-item anim-delay-1">
+      대표님의 휴대폰 앨범 속에 잠들어 있는 소중한 사진과 영상,<br>
+      그냥 두면 데이터지만 꺼내 쓰면 <span class="accent">'가장 강력한 신규 고객 유치 무기'</span>가 됩니다.
+    </div>
+
+    <!-- 지역 독점 보장 박스 -->
+    <div class="s8-guarantee-box anim-item anim-delay-2">
+      <div class="s8-g-left">
+        <div class="s8-g-title">
+          <span class="g-tag">상권 보호 철칙</span>
+          1개 지역구 · 동당 동일 업종은 딱 '1개 업체'만 독점 진행합니다
+        </div>
+        <div class="s8-g-desc">
+          (예: 강남구, 신사동, 기흥구, 동탄2 등) 같은 상권 내 경쟁 매장은 계약기간 중 절대 중복 계약하지 않습니다.<br>
+          만약 이를 어기고 동일 지역 내 경쟁 매장을 동시 진행할 경우, <b>진행 기간 및 완료 여부와 무관하게 즉시 200% 전액 환불</b>해 드립니다.
+        </div>
+      </div>
+      <div class="s8-refund-badge">
+        <div class="s8-refund-num">200%</div>
+        <div class="s8-refund-label">중복 계약 시 무조건 환불 보증</div>
+      </div>
+    </div>
+
+    <div class="s8-cta-row anim-item anim-delay-3">
+      <div class="s8-btn">우리 동네 독점 TO 선점 문의하기 →</div>
+      <div class="s8-note">⚡ 상담 즉시 우리 동네 검색 순위 무료 진단 리포트 제공</div>
+    </div>
+
+    <div class="brand" style="color:rgba(255,255,255,0.4);">155 MARKETING</div>
+    <div class="page-tag" style="color:rgba(255,255,255,0.4);"><span>0</span>8</div>
+  </div>
+</div>
+
+<script>
+  // 16:9 비율 유지 리사이즈 스케일러
+  function scaleSlides(){
+    document.querySelectorAll('.slide').forEach(function(slide){
+      var stage = slide.parentElement;
+      var scale = Math.min(stage.clientWidth / 1280, stage.clientHeight / 720);
+      slide.style.transform = 'scale(' + scale + ')';
+    });
+  }
+  window.addEventListener('resize', scaleSlides);
+  window.addEventListener('load', scaleSlides);
+  scaleSlides();
+
+  // 스크롤 시 순차 등장 모션
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.35 });
+
+  document.querySelectorAll('.stage').forEach(stage => {
+    observer.observe(stage);
+  });
+
+  // 2페이지 검색창: 입력 시 실시간 네이버 모바일 검색 새 창 열기
+  function searchNaver(e) {
+    if (e) e.preventDefault();
+    const input = document.getElementById('naverKeywordInput');
+    const query = input.value.trim();
+    if (!query) {
+      alert('검색할 키워드(예: 구월동 PT, 강남 피부관리 등)를 입력해주세요!');
+      input.focus();
+      return;
+    }
+    // 모바일 네이버 실제 검색 페이지 새 탭 오픈
+    const url = 'https://m.search.naver.com/search.naver?query=' + encodeURIComponent(query);
+    window.open(url, '_blank');
+  }
+</script>
+
+</body>
+</html>
