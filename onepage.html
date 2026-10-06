@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>네이버 플레이스 클립 계약 상품 안내</title>
+<style>
+  @font-face {
+    font-family: 'SUIT';
+    src: url('https://cdn.jsdelivr.net/gh/sunn-us/SUIT@2/fonts/variable/woff2/SUIT-Variable.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    background-color: #04291e;
+    font-family: 'SUIT', -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
+    color: #1e293b;
+    word-break: keep-all;
+  }
+
+  body {
+    padding: 30px 16px 60px 16px;
+  }
+
+  .main-canvas {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #065f46 0%, #047857 18%, #033f2e 100%);
+    border-radius: 24px;
+    padding: 38px 24px 30px 24px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .header-zone {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .main-title {
+    font-size: 42px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    letter-spacing: -0.03em;
+  }
+  .main-title span {
+    color: #6ee7b7;
+  }
+  .sub-category {
+    font-size: 18px;
+    color: #d1fae5;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .cards-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: center;
+  }
+
+  .pkg-card {
+    flex: 1 1 340px;
+    max-width: 375px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f1f5f9;
+  }
+  .ribbon-icon {
+    width: 46px;
+    height: 50px;
+    color: #ffffff;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    line-height: 1.1;
+    flex-shrink: 0;
+  }
+  .ribbon-icon .sub { font-size: 11px; font-weight: 800; opacity: 0.95; }
+  .ribbon-icon .char { font-size: 24px; font-weight: 900; }
+
+  .bg-a { background: #059669; }
+  .bg-b { background: #1d4ed8; }
+  .bg-c { background: #dc2626; }
+
+  .pkg-name {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  .name-a { color: #047857; }
+  .name-b { color: #1e40af; }
+  .name-c { color: #b91c1c; }
+
+  .service-boxes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .service-pill {
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 16.5px;
+    font-weight: 850;
+    color: #1e293b;
+    background: #f8fafc;
+    letter-spacing: -0.02em;
+  }
+  .service-pill .red-bold { color: #dc2626; font-weight: 900; }
+  .service-pill .blue-bold { color: #2563eb; font-weight: 900; }
+
+  .price-container {
+    text-align: center;
+    padding: 14px 6px;
+    border-top: 2px dashed #e2e8f0;
+    border-bottom: 2px dashed #e2e8f0;
+    background: #fafafa;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  .capsule-badge {
+    border: 1.5px solid #64748b;
+    border-radius: 14px;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #475569;
+    padding: 2px 9px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+  .price-highlight {
+    font-size: 38px;
+    font-weight: 900;
+    color: #dc2626;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  .price-highlight .unit { font-size: 20px; color: #1e293b; font-weight: 850; }
+  .contract-term { font-size: 16px; color: #64748b; font-weight: 800; }
+  
+  .total-sum-line {
+    font-size: 17.5px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-top: 4px;
+  }
+  /* 취소선 제거 및 깔끔하고 또렷한 톤 적용 */
+  .total-sum-line span {
+    font-size: 14.5px;
+    color: #475569;
+    margin-left: 6px;
+    font-weight: 700;
+  }
+
+  .cases-wrap {
+    margin-top: auto;
+  }
+  .cases-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: #475569;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cases-title::before {
+    content: "";
+    width: 4px;
+    height: 13px;
+    background: #059669;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .case-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .case-row {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .case-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .case-badge {
+    background: #0f2c59;
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 900;
+    padding: 3px 6px;
+    border-radius: 5px;
+    flex-shrink: 0;
+  }
+  .case-txt {
+    font-size: 13px;
+    font-weight: 750;
+    color: #334155;
+    line-height: 1.35;
+  }
+  .case-txt b {
+    color: #dc2626;
+    display: block;
+    font-size: 14px;
+    font-weight: 900;
+  }
+  
+  .case-photo-thumb {
+    width: 64px;
+    height: 46px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #e2e8f0;
+    border: 1px solid #cbd5e1;
+  }
+  .case-photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .footer-trust-bar {
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 14px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+</style>
+</head>
+<body>
+
+<div class="main-canvas">
+
+  <!-- 헤더 -->
+  <div class="header-zone">
+    <div class="main-title">
+      네이버 플레이스 클립 <span>계약 상품 안내</span>
+    </div>
+    <div class="sub-category">
+      에스테틱 · 피부샵 · 풋샵 · 네일 / 미용실 · 지역 맛집 전용
+    </div>
+  </div>
+
+  <!-- 3개 상품 카드 (A, B, C) -->
+  <div class="cards-row">
+
+    <!-- [상품 A : 플레이스 클립형] -->
+    <div class="pkg-card">
+      <div class="card-top">
+        <div class="ribbon-icon bg-a">
+          <span class="sub">상품</span>
+          <span class="char">A</span>
+        </div>
+        <div class="pkg-name name-a">플레이스 클립형</div>
+      </div>
+
+      <div class="service-boxes">
+        <div class="service-pill">
+          플레이스 클립 <span class="red-bold">10개</span> 진행
+        </div>
+        <div class="service-pill">
+          매장 홈 <b>클립 영역 세팅</b>
+        </div>
+        <div class="service-pill">
+          검색 피드 <span class="red-bold">클립 영역 타깃 노출</span>
+        </div>
+      </div>
+
+      <div class="price-container">
+        <span class="capsule-badge">계약금액</span><br>
+        <span class="price-highlight">월 15<span class="unit">만원</span></span>
+        <span class="contract-term">/ 6개월 계약</span>
+        <div class="total-sum-line">
+          총 결제금액 90만원 <span>(월 계약 20만원)</span>
+        </div>
+      </div>
+
+      <div class="cases-wrap">
+        <div class="cases-title">실제 진행 사례</div>
+        <div class="case-list">
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 01</span>
+              <div class="case-txt">부평 네일샵 노출 후<b>신규 예약 200% 증가</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=160&auto=format&fit=crop&q=80" alt="네일 실사">
+            </div>
+          </div>
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 02</span>
+              <div class="case-txt">배곧 두피스파 광고 후<b>유입고객 300% 증가</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=160&auto=format&fit=crop&q=80" alt="두피스파 실사">
+            </div>
+          </div>
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 03</span>
+              <div class="case-txt">지역 맛집 클립 진행 후<b>주말 테이블 회전 2배 증대</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=160&auto=format&fit=crop&q=80" alt="맛집 실사">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- [상품 B : 클립+블로그 올인원] -->
+    <div class="pkg-card">
+      <div class="card-top">
+        <div class="ribbon-icon bg-b">
+          <span class="sub">상품</span>
+          <span class="char">B</span>
+        </div>
+        <div class="pkg-name name-b">클립+블로그 올인원</div>
+      </div>
+
+      <div class="service-boxes">
+        <div class="service-pill">
+          클립 + 블로그 <span class="blue-bold">총 20개</span> 진행
+        </div>
+        <div class="service-pill">
+          지역 롱테일 키워드 <span class="red-bold">집중 타깃 노출</span>
+        </div>
+        <div class="service-pill">
+          검색(블로그)+추천(클립) <b>이중 점유</b>
+        </div>
+      </div>
+
+      <div class="price-container">
+        <span class="capsule-badge">계약금액</span><br>
+        <span class="price-highlight">월 27<span class="unit">만원</span></span>
+        <span class="contract-term">/ 6개월 계약</span>
+        <div class="total-sum-line">
+          총 결제금액 162만원 <span>(월 계약 36만원)</span>
+        </div>
+      </div>
+
+      <div class="cases-wrap">
+        <div class="cases-title">실제 진행 사례</div>
+        <div class="case-list">
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 01</span>
+              <div class="case-txt">강남 피부샵 비포애프터<b>첫달 방문예약 130건 달성</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=160&auto=format&fit=crop&q=80" alt="피부관리 실사">
+            </div>
+          </div>
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 02</span>
+              <div class="case-txt">인천 PT샵 올인원 후<b>ROAS 926% 폭발 달성</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=160&auto=format&fit=crop&q=80" alt="PT 실사">
+            </div>
+          </div>
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 03</span>
+              <div class="case-txt">풋샵 발각질 케어 숏폼 후<b>타지역 원정예약 150건</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=160&auto=format&fit=crop&q=80" alt="풋케어 실사">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- [상품 C : 집중 홍보형 패키지] -->
+    <div class="pkg-card">
+      <div class="card-top">
+        <div class="ribbon-icon bg-c">
+          <span class="sub">상품</span>
+          <span class="char">C</span>
+        </div>
+        <div class="pkg-name name-c">집중 홍보형 패키지</div>
+      </div>
+
+      <div class="service-boxes">
+        <div class="service-pill">
+          클립 + 블로그 <span class="red-bold">총 40개</span> 진행
+        </div>
+        <div class="service-pill">
+          월간 집중 슬롯 <span class="red-bold">선착순 한정 배정</span>
+        </div>
+        <div class="service-pill">
+          전문 마케터 <span class="red-bold">1:1 최우선 전담 케어</span>
+        </div>
+      </div>
+
+      <div class="price-container">
+        <span class="capsule-badge">계약금액</span><br>
+        <span class="price-highlight">월 49<span class="unit">만원</span></span>
+        <span class="contract-term">/ 6개월 계약</span>
+        <div class="total-sum-line">
+          총 결제금액 294만원 <span>(월 계약 66만원)</span>
+        </div>
+      </div>
+
+      <div class="cases-wrap">
+        <div class="cases-title">실제 진행 사례</div>
+        <div class="case-list">
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 01</span>
+              <div class="case-txt">청라 쭈꾸미전문점 노출 후<b>월 매출 200% 증가 달성</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=160&auto=format&fit=crop&q=80" alt="쭈꾸미 맛집 실사">
+            </div>
+          </div>
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 02</span>
+              <div class="case-txt">신규 미용실 숏폼 집중 후<b>지역 상권 검색 점유 1위</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=160&auto=format&fit=crop&q=80" alt="헤어살롱 실사">
+            </div>
+          </div>
+          <div class="case-row">
+            <div class="case-left">
+              <span class="case-badge">CASE 03</span>
+              <div class="case-txt">체형교정/필라테스 집중 후<b>창업 문의 급증</b></div>
+            </div>
+            <div class="case-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=160&auto=format&fit=crop&q=80" alt="체형교정 실사">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 하단 신뢰 보증 바 -->
+  <div class="footer-trust-bar">
+    <div>🛡️ 플랫폼 제휴 실명인증 계정 (어뷰징 ZERO)</div>
+    <div>📁 체험단 응대 ZERO (사진·영상만 전송)</div>
+    <div>🎧 전문 마케팅 담당자 1:1 맞춤 관리</div>
+  </div>
+
+</div>
+
+</body>
+</html>
