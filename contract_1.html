@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>네이버 플레이스 클립 마케팅 전자계약</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=Nanum+Myeongjo:wght@700&display=swap');
+    body { font-family: 'Noto Sans KR', sans-serif; }
+    .stamp-font { font-family: 'Nanum Myeongjo', serif; }
+
+    /* PDF 출력용 A4 고정 박스 스타일 */
+    .pdf-render-box {
+      width: 794px !important;
+      min-width: 794px !important;
+      max-width: 794px !important;
+      padding: 36px 44px !important;
+      box-sizing: border-box !important;
+      background: #ffffff !important;
+      color: #0f172a !important;
+      font-size: 11.5px !important;
+      line-height: 1.55 !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+  <!-- ================= 1. 관리자 비밀번호 모달 ================= -->
+  <div id="adminAuthModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
+      <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl">🔒</div>
+      <h2 class="text-lg font-bold text-slate-900 mb-1">관리자 인증</h2>
+      <p class="text-xs text-slate-500 mb-4">계약서 생성 페이지는 관리자 전용입니다.</p>
+      <input type="password" id="adminPwdInput" placeholder="관리자 비밀번호 입력" class="w-full border border-slate-300 rounded-xl p-3 text-center text-sm outline-none focus:ring-2 focus:ring-blue-500 mb-3 tracking-widest font-mono">
+      <button onclick="checkAdminPassword()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl text-sm transition">접속하기</button>
+      <p id="pwdError" class="text-xs text-red-500 mt-2 hidden">비밀번호가 올바르지 않습니다.</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto py-8 px-4">
+    <!-- 상단 헤더 -->
+    <header class="mb-6 flex justify-between items-center pb-4 border-b border-slate-200">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">네이버 플레이스 클립 마케팅 전자계약</h1>
+        <p class="text-xs text-slate-500 mt-0.5" id="pageModeBadge">관리자 모드 (계약 생성)</p>
+      </div>
+      <div id="adminControlsTop" class="hidden">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">관리자 인증됨</span>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- ================= 좌측: 입력 패널 ================= -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- 관리자 패널 -->
+        <div id="adminPanel" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="border-b pb-3">
+            <h2 class="text-base font-bold text-slate-900">📋 계약 조건 설정 (관리자)</h2>
+            <p class="text-xs text-slate-500 mt-0.5">조건을 선택하고 고객 서명 링크를 생성하세요.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">구글 드라이브 Webhook URL</label>
+            <input type="text" id="gasWebhookUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-blue-500 font-mono">
+            <p class="text-[11px] text-slate-400 mt-1">* 구글 Apps Script 배포 URL (한번 넣으면 링크에 자동 포함)</p>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-700">대상 사업장 사전 입력 (선택)</label>
+            <input type="text" id="targetUrlInput" placeholder="플레이스 URL 또는 관리계정" class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none focus:ring-1 focus:ring-blue-500">
+            <input type="text" id="targetCategoryInput" placeholder="업종 / 주요 시술(메뉴)" class="w-full border border-slate-300 rounded-lg p-2.5 text-xs outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-700">마케팅 상품 선택</label>
+            <div class="space-y-1.5 text-xs">
+              <label class="flex items-start gap-2 p-2 border rounded-xl hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="productOption" value="1" checked onchange="updateContractTerms()" class="mt-0.5 text-blue-600">
+                <div>
+                  <div class="font-bold text-slate-800">1. 플레이스 클립 베이직</div>
+                  <div class="text-slate-500">월 10건 (총 60건) / 월 15만 원</div>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2 p-2 border rounded-xl hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="productOption" value="2" onchange="updateContractTerms()" class="mt-0.5 text-blue-600">
+                <div>
+                  <div class="font-bold text-slate-800">2. 플레이스 클립 스탠다드</div>
+                  <div class="text-slate-500">월 20건 (총 120건) / 월 27만 원</div>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2 p-2 border rounded-xl hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="productOption" value="3" onchange="updateContractTerms()" class="mt-0.5 text-blue-600">
+                <div>
+                  <div class="font-bold text-slate-800">3. 플레이스 클립 프리미엄</div>
+                  <div class="text-slate-500">월 40건 (총 240건) / 월 49만 원</div>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2 p-2 border rounded-xl hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="productOption" value="4" onchange="updateContractTerms()" class="mt-0.5 text-blue-600">
+                <div>
+                  <div class="font-bold text-slate-800">4. 플레이스+블로그 베이직</div>
+                  <div class="text-slate-500">월 클립 5건 + 블로그 5건 / 월 15만 원</div>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2 p-2 border rounded-xl hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="productOption" value="5" onchange="updateContractTerms()" class="mt-0.5 text-blue-600">
+                <div>
+                  <div class="font-bold text-slate-800">5. 플레이스+블로그 스탠다드</div>
+                  <div class="text-slate-500">월 클립 10건 + 블로그 10건 / 월 27만 원</div>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2 p-2 border rounded-xl hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="productOption" value="6" onchange="updateContractTerms()" class="mt-0.5 text-blue-600">
+                <div>
+                  <div class="font-bold text-slate-800">6. 플레이스+블로그 프리미엄</div>
+                  <div class="text-slate-500">월 클립 20건 + 블로그 20건 / 월 49만 원</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-700">납부 방식</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" id="btnPayLump" onclick="setPaymentType('lump')" class="py-2.5 rounded-xl border text-xs font-bold bg-blue-50 border-blue-600 text-blue-700">
+                일시납 (전액)
+              </button>
+              <button type="button" id="btnPayMonth" onclick="setPaymentType('month')" class="py-2.5 rounded-xl border text-xs font-bold bg-white border-slate-300 text-slate-600">
+                분할 납부 (월납)
+              </button>
+            </div>
+            <div id="paymentCalcNotice" class="p-2.5 bg-slate-50 rounded-xl text-xs text-slate-600 border border-slate-100">
+              총 계약 금액: <strong id="calcTotalSummary" class="text-blue-700 font-bold">900,000원</strong> (VAT 별도)
+            </div>
+          </div>
+
+          <button onclick="generateCustomerLink()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl text-sm transition">
+            🔗 고객 전용 서명 링크 생성 및 복사
+          </button>
+          
+          <div id="linkCopyAlert" class="text-center text-xs font-semibold text-emerald-600 hidden">
+            ✓ 고객 서명 링크가 클립보드에 복사되었습니다!
+          </div>
+        </div>
+
+        <!-- 고객 패널 -->
+        <div id="customerPanel" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="border-b pb-3">
+            <h2 class="text-base font-bold text-slate-900">✍️ 계약자 정보 입력 및 전자날인</h2>
+            <p class="text-xs text-slate-500 mt-0.5">상호와 대표자명을 입력하시면 전자 인감이 자동 생성됩니다.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">상호명 (사업장명) <span class="text-red-500">*</span></label>
+            <input type="text" id="custCompany" placeholder="예: (주)헤어살롱라온" oninput="syncCustomerInfo()" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">대표자 성명 <span class="text-red-500">*</span></label>
+            <input type="text" id="custCeo" placeholder="예: 홍길동" oninput="syncCustomerInfo()" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">사업자등록번호 <span class="text-red-500">*</span></label>
+            <input type="text" id="custBizNo" placeholder="예: 123-45-67890" oninput="syncCustomerInfo()" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 font-mono">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">휴대폰 번호 <span class="text-red-500">*</span></label>
+            <input type="tel" id="custPhone" placeholder="예: 010-1234-5678" oninput="syncCustomerInfo()" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 font-mono">
+          </div>
+
+          <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+            <p class="text-xs font-bold text-blue-900 mb-0.5">ℹ️ 전자 서명 효력 안내</p>
+            <p class="text-[11px] text-blue-800 leading-relaxed">
+              본 계약서에 생성된 전자 인감 날인은 <strong>「전자서명법」 제3조</strong>에 의거하여 정식 인감 날인과 동일한 법적 효력을 갖습니다.
+            </p>
+          </div>
+
+          <button id="btnSignSubmit" onclick="signAndCompleteContract()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-base shadow-md transition">
+            계약 내용 확인 및 전자 날인 체결
+          </button>
+          
+          <div id="submitStatusMsg" class="text-center text-xs font-semibold text-slate-600 hidden"></div>
+        </div>
+
+      </div>
+
+      <!-- ================= 우측: 계약서 전문 프리뷰 ================= -->
+      <div class="lg:col-span-7 overflow-x-auto flex justify-center">
+        <!-- PDF 캡처 대상: pdf-render-box 클래스로 크기 엄격 통제 -->
+        <div id="contractA4Doc" class="pdf-render-box shadow-md border border-slate-200 rounded-xl">
+          
+          <div class="text-center border-b pb-3 mb-4">
+            <h2 class="text-xl font-extrabold tracking-tight text-slate-950">네이버 플레이스 클립 마케팅 업무 위수탁 계약서</h2>
+          </div>
+
+          <p class="mb-3 text-justify font-medium leading-relaxed">
+            <span id="docPartyACelebration" class="font-bold text-blue-800 underline underline-offset-2">OOOOOOOO</span>(이하 "갑")와 
+            <span class="font-bold text-slate-950">(주)찰리컴퍼니</span>(이하 "을")는 상호 간의 신의성실 원칙에 입각하여 "갑"의 사업장 홍보 및 네이버 플레이스 마케팅 업무 위수탁에 관한 계약을 다음과 같이 체결한다.
+          </p>
+
+          <div class="space-y-2.5 text-slate-800">
+            <div>
+              <strong class="text-slate-950">제1조 (목적)</strong>
+              본 계약은 "갑"이 운영하는 사업장의 온라인 인지도 향상 및 매출 증대를 위해 "을"에게 네이버 플레이스 클립 및 부가 마케팅 업무를 위탁하고, "을"이 이를 성실히 수행함에 있어 필요한 제반 사항과 권리·의무를 규정함을 목적으로 한다.
+            </div>
+
+            <div>
+              <strong class="text-slate-950">제2조 (계약 상품 및 과업 범위)</strong>
+              <div class="mt-1 p-2.5 bg-slate-50 rounded border border-slate-200 space-y-0.5 text-[11px]">
+                <p><strong>1. 선택 상품명:</strong> <span id="docProductTitle" class="font-bold text-blue-700">플레이스 클립 베이직</span></p>
+                <p><strong>2. 대상 사업장 정보:</strong> 상호: <span id="docShopName" class="font-medium">-</span> | 플레이스 URL: <span id="docPlaceUrl" class="font-medium">-</span> | 업종/메뉴: <span id="docCategory" class="font-medium">-</span></p>
+                <p><strong>3. 세부 과업:</strong> 숏폼 클립 <span id="docClipScope" class="font-medium">총 60건 (월 평균 10건)</span> / 블로그 <span id="docBlogScope" class="font-medium">해당 없음</span></p>
+              </div>
+            </div>
+
+            <div>
+              <strong class="text-slate-950">제3조 (계약 기간)</strong>
+              1. 계약 기간은 <span id="docPeriodStart" class="font-semibold">2026년 10월 07일</span>부터 <span id="docPeriodEnd" class="font-semibold">2027년 04월 06일</span>까지(총 6개월)로 한다.
+              <br>2. 만료 30일 전까지 서면 통보가 없는 한 본 계약은 동일 조건으로 자동 연장할 수 있다.
+            </div>
+
+            <div>
+              <strong class="text-slate-950">제4조 (용역 대금 및 지급 방식)</strong>
+              <br>1. 총 계약 금액: <strong id="docTotalAmount" class="font-bold text-blue-800">금 900,000원</strong> (VAT 별도)
+              <br>2. 지급 방식: <span id="docPaymentMethod" class="font-semibold">[✓] 일시납 (체결일로부터 3일 이내 전액 입금)</span>
+              <br>3. 입금 계좌: <span class="font-bold">IBK기업은행 539-037043-01-011 (예금주: 주식회사 찰리컴퍼니)</span>
+              <br>4. 대금 지급이 7일 이상 지체될 경우 "을"은 제작 및 노출 업무를 일시 중단할 수 있다.
+            </div>
+
+            <div>
+              <strong class="text-slate-950">제5조 (자료 제공 및 협조 의무)</strong>
+              "갑"은 고화질 사진 및 매장 정보를 정해진 기한 내 제공하며, "을"은 이를 본 목적 외 제3자에게 유출하지 않는다.
+            </div>
+
+            <div>
+              <strong class="text-slate-950">제6조 (플랫폼 정책 준수 및 한계)</strong>
+              "을"은 실명 인증 기반의 정성적 작업을 수행하며, 네이버 공식 로직 변경 등으로 인한 순위 변동은 귀책사유로 보지 않는다.
+            </div>
+
+            <div>
+              <strong class="text-slate-950">제7조 (지식재산권 및 초상권)</strong>
+              제작된 영상의 저작재산권은 "을"에게 귀속되되 "갑"은 홍보 목적으로 자유롭게 활용할 수 있다.
+            </div>
+
+            <div>
+              <strong class="text-slate-950">제8조 (계약 해지 및 환불)</strong>
+              "을"의 귀책 시 미진행분을 일할 계산 환불하며, "갑"의 중도 해지 시 기진행 월은 할인 전 정가 소급 공제 및 잔여금의 10%를 위약금으로 공제한다.
+            </div>
+
+            <div>
+              <strong class="text-slate-950">제9조 (비밀유지 및 관할 법원)</strong>
+              본 계약과 관련된 영업비밀은 누설하지 않으며, 분쟁 발생 시 "을"의 사업장 소재지 관할 법원을 전속 관할로 한다.
+            </div>
+          </div>
+
+          <!-- 서명 날인란 -->
+          <div class="mt-5 pt-3 border-t border-slate-300">
+            <p class="text-center font-bold text-slate-800 mb-3 text-xs" id="docContractDate">
+              2026년 10월 07일
+            </p>
+
+            <div class="grid grid-cols-2 gap-4 text-[11px]">
+              <!-- 갑 (고객) -->
+              <div class="border border-slate-300 rounded-lg p-3 bg-slate-50/50">
+                <div class="font-bold text-xs text-slate-950 border-b pb-1 mb-1.5">[위탁자: "갑"]</div>
+                <div>상호명: <span id="signPartyAName" class="font-medium">-</span></div>
+                <div>등록번호: <span id="signPartyABizNo" class="font-medium">-</span></div>
+                <div>연락처: <span id="signPartyAPhone" class="font-medium">-</span></div>
+                <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-200">
+                  <span>대표자: <strong id="signPartyACeo" class="text-xs font-bold ml-1">-</strong></span>
+                  <div class="w-12 h-12 border-2 border-red-600 rounded-full flex flex-col items-center justify-center text-red-600 stamp-font select-none bg-white">
+                    <span class="text-[8px] font-sans">전자날인</span>
+                    <span id="stampText" class="text-[11px] font-bold leading-tight">인</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 을 (주식회사 찰리컴퍼니) -->
+              <div class="border border-slate-300 rounded-lg p-3 bg-slate-50/50">
+                <div class="font-bold text-xs text-slate-950 border-b pb-1 mb-1.5">[수탁자: "을"]</div>
+                <div>상호명: <span class="font-semibold">주식회사 찰리컴퍼니</span></div>
+                <div>등록번호: <span class="font-mono">542-88-01501</span></div>
+                <div>연락처: 010-8922-1177</div>
+                <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-200">
+                  <span>대표자: <strong class="text-xs font-bold ml-1">유 진 혁</strong></span>
+                  <div class="w-12 h-12 border-2 border-red-600 rounded-full flex flex-col items-center justify-center text-red-600 stamp-font select-none bg-white">
+                    <span class="text-[8px] font-sans">전자날인</span>
+                    <span class="text-[11px] font-bold leading-tight">찰리인</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const PRODUCTS = {
+      "1": { name: "플레이스 클립 베이직", monthly: 150000, total: 900000, clip: "총 60건 (월 평균 10건)", blog: "해당 없음" },
+      "2": { name: "플레이스 클립 스탠다드", monthly: 270000, total: 1620000, clip: "총 120건 (월 평균 20건)", blog: "해당 없음" },
+      "3": { name: "플레이스 클립 프리미엄", monthly: 490000, total: 2940000, clip: "총 240건 (월 평균 40건)", blog: "해당 없음" },
+      "4": { name: "플레이스+블로그 베이직", monthly: 150000, total: 900000, clip: "총 30건 (월 평균 5건)", blog: "총 30건 (월 평균 5건)" },
+      "5": { name: "플레이스+블로그 스탠다드", monthly: 270000, total: 1620000, clip: "총 60건 (월 평균 10건)", blog: "총 60건 (월 평균 10건)" },
+      "6": { name: "플레이스+블로그 프리미엄", monthly: 490000, total: 2940000, clip: "총 120건 (월 평균 20건)", blog: "총 120건 (월 평균 20건)" }
+    };
+
+    let paymentMethod = "lump";
+    let selectedProdId = "1";
+
+    const today = new Date();
+    const endDate = new Date(today);
+    endDate.setMonth(today.getMonth() + 6);
+    endDate.setDate(today.getDate() - 1);
+
+    function formatDate(d) {
+      return `${d.getFullYear()}년 ${String(d.getMonth() + 1).padStart(2, '0')}월 ${String(d.getDate()).padStart(2, '0')}일`;
+    }
+
+    document.getElementById('docContractDate').innerText = formatDate(today);
+    document.getElementById('docPeriodStart').innerText = formatDate(today);
+    document.getElementById('docPeriodEnd').innerText = formatDate(endDate);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const contractPayload = urlParams.get('c');
+
+      if (contractPayload) {
+        try {
+          const decoded = JSON.parse(decodeURIComponent(escape(atob(contractPayload))));
+          loadContractFromData(decoded);
+          switchToCustomerMode();
+          return;
+        } catch (e) {
+          console.error("데이터 파싱 실패", e);
+        }
+      }
+
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+      document.getElementById('customerPanel').classList.add('hidden');
+      updateContractTerms();
+    });
+
+    function checkAdminPassword() {
+      const pwd = document.getElementById('adminPwdInput').value.trim();
+      if (pwd === "01089221177") {
+        document.getElementById('adminAuthModal').classList.add('hidden');
+        document.getElementById('adminControlsTop').classList.remove('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        document.getElementById('customerPanel').classList.add('hidden');
+      } else {
+        document.getElementById('pwdError').classList.remove('hidden');
+      }
+    }
+
+    function switchToCustomerMode() {
+      document.getElementById('adminAuthModal').classList.add('hidden');
+      document.getElementById('adminPanel').classList.add('hidden');
+      document.getElementById('customerPanel').classList.remove('hidden');
+      document.getElementById('pageModeBadge').innerText = "고객 서명 체결 모드";
+      document.getElementById('pageModeBadge').className = "text-xs text-blue-600 font-bold mt-0.5";
+    }
+
+    function setPaymentType(type) {
+      paymentMethod = type;
+      const btnLump = document.getElementById('btnPayLump');
+      const btnMonth = document.getElementById('btnPayMonth');
+
+      if (type === 'lump') {
+        btnLump.className = "py-2.5 rounded-xl border text-xs font-bold bg-blue-50 border-blue-600 text-blue-700";
+        btnMonth.className = "py-2.5 rounded-xl border text-xs font-bold bg-white border-slate-300 text-slate-600";
+      } else {
+        btnMonth.className = "py-2.5 rounded-xl border text-xs font-bold bg-blue-50 border-blue-600 text-blue-700";
+        btnLump.className = "py-2.5 rounded-xl border text-xs font-bold bg-white border-slate-300 text-slate-600";
+      }
+      updateContractTerms();
+    }
+
+    function updateContractTerms() {
+      const prodRadio = document.querySelector('input[name="productOption"]:checked');
+      if (prodRadio) selectedProdId = prodRadio.value;
+
+      const prod = PRODUCTS[selectedProdId];
+      const targetUrl = document.getElementById('targetUrlInput')?.value.trim();
+      const targetCat = document.getElementById('targetCategoryInput')?.value.trim();
+
+      document.getElementById('docProductTitle').innerText = prod.name;
+      document.getElementById('docClipScope').innerText = prod.clip;
+      document.getElementById('docBlogScope').innerText = prod.blog;
+      document.getElementById('docTotalAmount').innerText = `금 ${prod.total.toLocaleString()}원`;
+
+      if (targetUrl) document.getElementById('docPlaceUrl').innerText = targetUrl;
+      if (targetCat) document.getElementById('docCategory').innerText = targetCat;
+
+      const calcNotice = document.getElementById('calcTotalSummary');
+      const methodEl = document.getElementById('docPaymentMethod');
+
+      if (paymentMethod === 'lump') {
+        if (calcNotice) calcNotice.innerText = `${prod.total.toLocaleString()}원 (일시납)`;
+        methodEl.innerText = `[✓] 일시납 (체결일로부터 3일 이내 금 ${prod.total.toLocaleString()}원 입금, 할인가 적용)`;
+      } else {
+        if (calcNotice) calcNotice.innerText = `매월 1회 ${prod.monthly.toLocaleString()}원 x 6회`;
+        methodEl.innerText = `[✓] 분할 납부 (매월 1일 익월분 금 ${prod.monthly.toLocaleString()}원 입금, 총 6회)`;
+      }
+    }
+
+    function syncCustomerInfo() {
+      const comp = document.getElementById('custCompany').value.trim();
+      const ceo = document.getElementById('custCeo').value.trim();
+      const biz = document.getElementById('custBizNo').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+
+      document.getElementById('docPartyACelebration').innerText = comp || 'OOOOOOOO';
+      document.getElementById('docShopName').innerText = comp || '-';
+      document.getElementById('signPartyAName').innerText = comp || '-';
+      document.getElementById('signPartyABizNo').innerText = biz || '-';
+      document.getElementById('signPartyAPhone').innerText = phone || '-';
+      document.getElementById('signPartyACeo').innerText = ceo || '-';
+
+      document.getElementById('stampText').innerText = ceo ? `${ceo.slice(-2)}인` : "인";
+    }
+
+    function generateCustomerLink() {
+      const payload = {
+        prodId: selectedProdId,
+        paymentMethod: paymentMethod,
+        targetUrl: document.getElementById('targetUrlInput').value.trim(),
+        targetCat: document.getElementById('targetCategoryInput').value.trim(),
+        gasWebhook: document.getElementById('gasWebhookUrl').value.trim()
+      };
+
+      const base64Str = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+      const currentUrl = window.location.origin + window.location.pathname;
+      const shareUrl = `${currentUrl}?c=${base64Str}`;
+
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        const alertEl = document.getElementById('linkCopyAlert');
+        alertEl.classList.remove('hidden');
+        setTimeout(() => alertEl.classList.add('hidden'), 5000);
+      });
+    }
+
+    function loadContractFromData(data) {
+      selectedProdId = data.prodId || "1";
+      paymentMethod = data.paymentMethod || "lump";
+      window.gasWebhookTargetUrl = data.gasWebhook || "";
+
+      if (data.targetUrl) document.getElementById('docPlaceUrl').innerText = data.targetUrl;
+      if (data.targetCat) document.getElementById('docCategory').innerText = data.targetCat;
+      updateContractTerms();
+    }
+
+    // ================= A4 1장 최적화 PDF 저장 & 구글 드라이브 전송 =================
+    async function signAndCompleteContract() {
+      const comp = document.getElementById('custCompany').value.trim();
+      const ceo = document.getElementById('custCeo').value.trim();
+      const biz = document.getElementById('custBizNo').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+
+      if (!comp || !ceo || !biz || !phone) {
+        alert("상호명, 대표자 성명, 사업자등록번호, 휴대폰번호를 모두 입력해 주세요.");
+        return;
+      }
+
+      if (!confirm(`[${comp}] 상호와 대표자 [${ceo}] 명의로 정식 전자 계약을 체결하시겠습니까?`)) {
+        return;
+      }
+
+      const btn = document.getElementById('btnSignSubmit');
+      const statusMsg = document.getElementById('submitStatusMsg');
+      btn.disabled = true;
+      btn.innerText = "계약서 체결 및 문서 생성 중...";
+      statusMsg.classList.remove('hidden');
+      statusMsg.innerText = "📄 규격 A4 PDF 계약서 생성 중...";
+
+      const element = document.getElementById('contractA4Doc');
+
+      // 여백과 비율을 A4 인쇄 규격(210x297mm)에 딱 맞춘 세팅
+      const opt = {
+        margin: [8, 8, 8, 8], // 상, 우, 하, 좌 여백 8mm (공백 최소화)
+        filename: `네이버플레이스_마케팅위수탁계약서_${comp}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2, 
+          useCORS: true,
+          scrollY: 0,
+          scrollX: 0,
+          windowWidth: 1024
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      try {
+        const pdfWorker = html2pdf().from(element).set(opt);
+        const pdfBlob = await pdfWorker.output('blob');
+        
+        // 1. 고객 브라우저로 PDF 다운로드
+        pdfWorker.save();
+
+        // 2. 구글 드라이브 Webhook 전송 (CORS 차단 방지 적용)
+        const webhookUrl = window.gasWebhookTargetUrl || document.getElementById('gasWebhookUrl')?.value.trim();
+        if (webhookUrl) {
+          statusMsg.innerText = "☁️ 구글 드라이브로 계약서를 안전하게 보관 중입니다...";
+          
+          const reader = new FileReader();
+          reader.readAsDataURL(pdfBlob);
+          reader.onloadend = async function () {
+            const base64data = reader.result.split(',')[1];
+            try {
+              await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                  company: comp,
+                  ceo: ceo,
+                  bizNo: biz,
+                  phone: phone,
+                  date: formatDate(today),
+                  pdfBase64: base64data
+                })
+              });
+              statusMsg.innerHTML = "✅ <strong>계약이 정상 체결되었습니다!</strong><br>체결된 계약서는 PDF로 저장되었으며, 안전하게 보관되었습니다.";
+              btn.innerText = "✓ 체결 완료";
+            } catch (err) {
+              console.error(err);
+              statusMsg.innerText = "계약서 PDF 다운로드가 완료되었습니다.";
+            }
+          };
+        } else {
+          statusMsg.innerHTML = "✅ <strong>계약이 정상 체결되었습니다!</strong><br>체결된 계약서 PDF 다운로드가 완료되었습니다.";
+          btn.innerText = "✓ 체결 완료";
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("계약서 생성 도중 오류가 발생했습니다.");
+        btn.disabled = false;
+        btn.innerText = "계약 내용 확인 및 전자 날인 체결";
+      }
+    }
+  </script>
+</body>
+</html>
